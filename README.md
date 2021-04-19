@@ -1,4 +1,4 @@
-# electron-vue-demo
+# chatclient-electron
 
 ## Project setup
 ```
