@@ -63,7 +63,7 @@
         display: flex;
     }
     #chatRoomContainer .chat-room-item {
-        display: none;
+        /*display: none;*/
         width: 100%;
         height: 100%;
         background: #fff;

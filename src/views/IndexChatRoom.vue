@@ -1,13 +1,13 @@
 <template>
     <div class="chat-body" v-bind:style="{width: chatBodyWidth + 'px', height: chatBodyHeight + 'px'}">
-        <DialogList ref="dialogList"></DialogList>
+        <DialogList ref="dialogList" v-bind:myDialogList="myDialogList" v-bind:accessDialogList="accessDialogList" v-bind:leaveDialogList="leaveDialogList"></DialogList>
         <div class="chat-window" >
             <div class="title">
                 <span class="user-name">{{userName}}</span>
                 <span class="user-source" data-id="0">{{userSource}}</span>
             </div>
             <div id="chatRoomContainer" class="chat-room-container" v-bind:style="{width: chatRoomWidth + 'px', height: chatRoomHeight + 'px'}">
-                <ChatRoomItem ref="chatRoomItem" v-for="item in dialogArr" v-bind:room="item.room" v-bind:fromUserId="item.fromUserId"></ChatRoomItem>
+                <ChatRoomItem ref="chatRoomItem" v-for="item in dialogArr" v-bind:room="item.room" v-bind:fromUserId="item.fromUserId" v-show=""></ChatRoomItem>
             </div>
         </div>
     </div>
@@ -27,14 +27,19 @@
                 userName: '',   // 客户名称
                 userSource: '', // 客户来源
                 account: '',    // 客服账号
-                dialogArr: [{
-                    "from": "匿名用户",
-                    "body": "匿名用户加入房间",
-                    "type": "1",
-                    "room": "t15knr54111@conference.cluster.openfire",
-                    "serviceUserName": "testuser1",
-                    "fromUserId": "11337_8_1"
-                }]   // 当前已接入的会话
+                dialogArr: [
+                    // {
+                    //     "from": "匿名用户",
+                    //     "body": "匿名用户加入房间",
+                    //     "type": "1",
+                    //     "room": "t15knr54111@conference.cluster.openfire",
+                    //     "serviceUserName": "testuser1",
+                    //     "fromUserId": "11337_8_1"
+                    // }
+                ],   // 当前已接入的会话
+                myDialogList: [],
+                accessDialogList: [],
+                leaveDialogList: []
             }
         },
         mounted() {
@@ -91,19 +96,19 @@
                 try {
                     data.fromUserId = data.fromUserId.split("_")[0];    // 客户id
                     // 客户离开后再加入
-                    var chatRoomDom = document.querySelector(".chat-room-item[data-fromuserid='"+data.fromUserId+"']");
-                    if (chatRoomDom) {
-                        var dialogKinds = document.querySelectorAll(".dialog-list-item[data-fromuserid='"+data.fromUserId+"']");
-                        for (var i=0; i<dialogKinds.length; i++) {
-                            dialogKinds[i].dataset.room = data.room;
-                        }
-                        chatRoomDom.dataset.room = data.room;
-                        chatRoomDom.dataset.is_end = "0";
-                        this.moveIntoInTheAccess(data);  // 将已离开分类中的会话移动到访问中
-                        return;
-                    }
+                    // var chatRoomDom = document.querySelector(".chat-room-item[data-fromuserid='"+data.fromUserId+"']");
+                    // if (chatRoomDom) {
+                    //     var dialogKinds = document.querySelectorAll(".dialog-list-item[data-fromuserid='"+data.fromUserId+"']");
+                    //     for (var i=0; i<dialogKinds.length; i++) {
+                    //         dialogKinds[i].dataset.room = data.room;
+                    //     }
+                    //     chatRoomDom.dataset.room = data.room;
+                    //     chatRoomDom.dataset.is_end = "0";
+                    //     this.moveIntoInTheAccess(data);  // 将已离开分类中的会话移动到访问中
+                    //     return;
+                    // }
                     this.addDialogKind(data);
-                    chatRoom.init(data);
+                    this.init(data);
                     // 处理是否当天第一次收到消费者消息
                     // todayFirstReceiveMsg(data);
                 } catch (e) {
@@ -117,28 +122,31 @@
                         return;
                     }
                     var msg = {
-                        "room": data.room,
-                        "fromUserId": data.fromUserId,
-                        "from": data.from,
-                        "time": "",
-                        "content": "",
-                        "avatar": "//static.youjiagou.com/musi/resources/images/serviceSystem/default_avatar.png"
+                        room: data.room,
+                        fromUserId: data.fromUserId,
+                        from: data.from,
+                        time: "",
+                        content: "",
+                        avatar: "//static.youjiagou.com/musi/resources/images/serviceSystem/default_avatar.png"
                     }
-                    ajax_post({"param": {"chat_user_id": data.fromUserId}, "serviceName": "CSS_BUV1_userInfo", "needAll": "1"}, function (data) {
-                        try {
-                            data = JSON.parse(data);
-                            if (data.code == "0") {
-                                if (data.rows[0].avatar.indexOf("http") == -1) {
-                                    data.rows[0].avatar = R_IMG + data.rows[0].avatar;
-                                }
-                                msg.avatar = data.rows[0].avatar;
-                            } else {
-                                console.log(data.description);
-                            }
-                        } catch (e) {
-                            console.log(e);
-                        }
-                    }, null, false);
+                    this.myDialogList.push(msg);
+                    this.accessDialogList.push(msg);
+                    // ajax_post({"param": {"chat_user_id": data.fromUserId}, "serviceName": "CSS_BUV1_userInfo", "needAll": "1"}, function (data) {
+                    //     try {
+                    //         data = JSON.parse(data);
+                    //         if (data.code == "0") {
+                    //             if (data.rows[0].avatar.indexOf("http") == -1) {
+                    //                 data.rows[0].avatar = R_IMG + data.rows[0].avatar;
+                    //             }
+                    //             msg.avatar = data.rows[0].avatar;
+                    //         } else {
+                    //             console.log(data.description);
+                    //         }
+                    //     } catch (e) {
+                    //         console.log(e);
+                    //     }
+                    // }, null, false);
+                    return;
                     var tplHtml = template("dialogItemTpl", {"msg": msg});
                     var tempDom = document.createElement("div");
                     tempDom.innerHTML = tplHtml;

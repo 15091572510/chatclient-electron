@@ -6,18 +6,57 @@
             <span>我的会话</span>
         </div>
         <ul class="dialog-select">
+            <li v-for="item in myDialogList"  class="dialog-list-item" v-on:click="checkedDialog()" data-room="item.room" data-from="item.from" data-fromuserid="msg.fromUserId">
+                <img class="customer-avatar" v-bind:src="item.avatar" />
+                <div class="customer-msg-preview">
+                    <p>
+                        <span class="customer-name">{{item.from}}</span>
+                        <span class="pre-msg-time">{{item.time}}</span>
+                    </p>
+                    <p class="msg-preview-container">
+                        <span class="msg-preview">{{item.content}}</span>
+                        <span class="unread-msg">0</span>
+                    </p>
+                </div>
+            </li>
         </ul>
         <div id="inTheAccess" class="dialog-kind" v-on:click="openOrHideDialogList()">
             <img class="dialog-kind-icon" src="//static.youjiagou.com/musi/resources/images/serviceSystem/new/createdown_up@2x.png" />
             <span>访问中</span>
         </div>
         <ul class="dialog-select">
+            <li v-for="item in accessDialogList"  class="dialog-list-item" v-on:click="checkedDialog()" data-room="item.room" data-from="item.from" data-fromuserid="msg.fromUserId">
+                <img class="customer-avatar" v-bind:src="item.avatar" />
+                <div class="customer-msg-preview">
+                    <p>
+                        <span class="customer-name">{{item.from}}</span>
+                        <span class="pre-msg-time">{{item.time}}</span>
+                    </p>
+                    <p class="msg-preview-container">
+                        <span class="msg-preview">{{item.content}}</span>
+                        <span class="unread-msg">0</span>
+                    </p>
+                </div>
+            </li>
         </ul>
         <div id="haveToLeave" class="dialog-kind" v-on:click="openOrHideDialogList()">
             <img class="dialog-kind-icon" src="//static.youjiagou.com/musi/resources/images/serviceSystem/new/createdown_up@2x.png" />
             <span>离开</span>
         </div>
         <ul class="dialog-select">
+            <li v-for="item in leaveDialogList"  class="dialog-list-item" v-on:click="checkedDialog()" data-room="item.room" data-from="item.from" data-fromuserid="msg.fromUserId">
+                <img class="customer-avatar" v-bind:src="item.avatar" />
+                <div class="customer-msg-preview">
+                    <p>
+                        <span class="customer-name">{{item.from}}</span>
+                        <span class="pre-msg-time">{{item.time}}</span>
+                    </p>
+                    <p class="msg-preview-container">
+                        <span class="msg-preview">{{item.content}}</span>
+                        <span class="unread-msg">0</span>
+                    </p>
+                </div>
+            </li>
         </ul>
     </div>
 </template>
@@ -27,9 +66,11 @@
         name: "DialogList",
         data: function () {
             return {
-                dialogListHeight: ''
+                dialogListHeight: '',
+                // dialogList: []
             }
         },
+        props: ['myDialogList', 'accessDialogList' , 'leaveDialogList'],
         methods: {
             setDialogListSize: function (height) {
                 this.dialogListHeight = height;
@@ -64,6 +105,9 @@
                 } catch (e) {
                     alert("openOrHideDialogList: " + e);
                 }
+            },
+            checkedDialog: function () {
+
             }
         }
     }
