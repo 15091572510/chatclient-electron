@@ -1,13 +1,13 @@
 <template>
     <div class="chat-body" v-bind:style="{width: chatBodyWidth + 'px', height: chatBodyHeight + 'px'}">
-        <DialogList ref="dialogList" v-bind:myDialogList="myDialogList" v-bind:accessDialogList="accessDialogList" v-bind:leaveDialogList="leaveDialogList"></DialogList>
+        <DialogList ref="dialogList"></DialogList>
         <div class="chat-window" >
             <div class="title">
                 <span class="user-name">{{userName}}</span>
                 <span class="user-source" data-id="0">{{userSource}}</span>
             </div>
             <div id="chatRoomContainer" class="chat-room-container" v-bind:style="{width: chatRoomWidth + 'px', height: chatRoomHeight + 'px'}">
-                <ChatRoomItem ref="chatRoomItem" v-for="item in dialogArr" v-bind:room="item.room" v-bind:fromUserId="item.fromUserId" v-show=""></ChatRoomItem>
+                <ChatRoomItem ref="chatRoomItem" v-for="item in this.$store.dialogArr" v-bind:room="item.room" v-bind:fromUserId="item.fromUserId" v-show="item.isChecked"></ChatRoomItem>
             </div>
         </div>
     </div>
@@ -27,19 +27,19 @@
                 userName: '',   // 客户名称
                 userSource: '', // 客户来源
                 account: '',    // 客服账号
-                dialogArr: [
-                    // {
-                    //     "from": "匿名用户",
-                    //     "body": "匿名用户加入房间",
-                    //     "type": "1",
-                    //     "room": "t15knr54111@conference.cluster.openfire",
-                    //     "serviceUserName": "testuser1",
-                    //     "fromUserId": "11337_8_1"
-                    // }
-                ],   // 当前已接入的会话
-                myDialogList: [],
-                accessDialogList: [],
-                leaveDialogList: []
+                // dialogArr: [
+                //     // {
+                //     //     "from": "匿名用户",
+                //     //     "body": "匿名用户加入房间",
+                //     //     "type": "1",
+                //     //     "room": "t15knr54111@conference.cluster.openfire",
+                //     //     "serviceUserName": "testuser1",
+                //     //     "fromUserId": "11337_8_1"
+                //     // }
+                // ],   // 当前已接入的会话
+                // myDialogList: [],
+                // accessDialogList: [],
+                // leaveDialogList: []
             }
         },
         mounted() {
@@ -83,7 +83,10 @@
                     "type": "1",
                     "room": "t15knr54111@conference.cluster.openfire",
                     "serviceUserName": "testuser1",
-                    "fromUserId": "11337_8_1"
+                    "fromUserId": "11337_8_1",
+                    avatar: '//static.youjiagou.com/musi/resources/images/serviceSystem/default_avatar.png',
+                    isOnline: true,
+                    isChecked: false
                 }
                 this.account = "testuser1";
                 this.createGroupChatRoom(data);
@@ -107,8 +110,9 @@
                     //     this.moveIntoInTheAccess(data);  // 将已离开分类中的会话移动到访问中
                     //     return;
                     // }
-                    this.addDialogKind(data);
-                    this.init(data);
+                    // this.addDialogKind(data);
+                    // this.init(data);
+                    this.$store.commit('addDialog', data)
                     // 处理是否当天第一次收到消费者消息
                     // todayFirstReceiveMsg(data);
                 } catch (e) {
@@ -117,20 +121,20 @@
             },
             addDialogKind: function(data) {
                 try {
-                    if (document.querySelector(".dialog-list-item[data-room='"+data.room+"']")) {
-                        alert("exist dialog");
-                        return;
-                    }
-                    var msg = {
-                        room: data.room,
-                        fromUserId: data.fromUserId,
-                        from: data.from,
-                        time: "",
-                        content: "",
-                        avatar: "//static.youjiagou.com/musi/resources/images/serviceSystem/default_avatar.png"
-                    }
-                    this.myDialogList.push(msg);
-                    this.accessDialogList.push(msg);
+                    // if (document.querySelector(".dialog-list-item[data-room='"+data.room+"']")) {
+                    //     alert("exist dialog");
+                    //     return;
+                    // }
+
+                    // var msg = {
+                    //     room: data.room,
+                    //     fromUserId: data.fromUserId,
+                    //     from: data.from,
+                    //     time: "",
+                    //     content: "",
+                    //     avatar: "//static.youjiagou.com/musi/resources/images/serviceSystem/default_avatar.png"
+                    // }
+
                     // ajax_post({"param": {"chat_user_id": data.fromUserId}, "serviceName": "CSS_BUV1_userInfo", "needAll": "1"}, function (data) {
                     //     try {
                     //         data = JSON.parse(data);
@@ -168,16 +172,16 @@
              */
             init: function (data) {
                 try {
-                    if (document.querySelector(".chat-room-item[data-room='"+data.room+"']")) {
-                        alert("exist chatRoom");
-                        return;
-                    }
-                    var param = {
-                        "room": data.room,
-                        "fromUserId": data.fromUserId,
-                        "account": data.serviceUserName
-                    }
-                    this.dialogArr.push(param);
+                    this.$store.commit('addDialog', data)
+                    // if (document.querySelector(".chat-room-item[data-room='"+data.room+"']")) {
+                    //     alert("exist chatRoom");
+                    //     return;
+                    // }
+                    // var param = {
+                    //     "room": data.room,
+                    //     "fromUserId": data.fromUserId,
+                    //     "account": data.serviceUserName
+                    // }
                     // var chatRoomHtml = template("chatRoomItemTpl", {"param": param});
                     // var tempDom = document.createElement("div");
                     // tempDom.innerHTML = chatRoomHtml;

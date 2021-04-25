@@ -6,7 +6,7 @@
             <span>我的会话</span>
         </div>
         <ul class="dialog-select">
-            <li v-for="item in myDialogList"  class="dialog-list-item" v-on:click="checkedDialog()" data-room="item.room" data-from="item.from" data-fromuserid="msg.fromUserId">
+            <li v-for="item in this.$store.state.dialogArr" class="dialog-list-item" v-on:click="checkedDialog(item.room)">
                 <img class="customer-avatar" v-bind:src="item.avatar" />
                 <div class="customer-msg-preview">
                     <p>
@@ -25,7 +25,7 @@
             <span>访问中</span>
         </div>
         <ul class="dialog-select">
-            <li v-for="item in accessDialogList"  class="dialog-list-item" v-on:click="checkedDialog()" data-room="item.room" data-from="item.from" data-fromuserid="msg.fromUserId">
+            <li v-for="item in this.$store.state.dialogArr" v-if="item.isOnline" class="dialog-list-item" v-on:click="checkedDialog(item.room)">
                 <img class="customer-avatar" v-bind:src="item.avatar" />
                 <div class="customer-msg-preview">
                     <p>
@@ -44,7 +44,7 @@
             <span>离开</span>
         </div>
         <ul class="dialog-select">
-            <li v-for="item in leaveDialogList"  class="dialog-list-item" v-on:click="checkedDialog()" data-room="item.room" data-from="item.from" data-fromuserid="msg.fromUserId">
+            <li v-for="item in this.$store.state.dialogArr" v-if="!item.isOnline" class="dialog-list-item" v-on:click="checkedDialog(item.room)">
                 <img class="customer-avatar" v-bind:src="item.avatar" />
                 <div class="customer-msg-preview">
                     <p>
@@ -70,7 +70,7 @@
                 // dialogList: []
             }
         },
-        props: ['myDialogList', 'accessDialogList' , 'leaveDialogList'],
+        // props: ['myDialogList', 'accessDialogList' , 'leaveDialogList'],
         methods: {
             setDialogListSize: function (height) {
                 this.dialogListHeight = height;
@@ -106,8 +106,9 @@
                     alert("openOrHideDialogList: " + e);
                 }
             },
-            checkedDialog: function () {
-
+            checkedDialog: function (room) {
+                this.$store.commit('cancelChecked')
+                this.$store.commit('selectChecked', room)
             }
         }
     }
@@ -218,5 +219,45 @@
         text-align: center;
         box-sizing: border-box;
         display: none;
+    }
+    .dialog-list .dialog-avatar {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .dialog-list .dialog-list-item:hover {
+        background: #f5f6fa;
+    }
+    .dialog-list .dialog-list-item img {
+        width: 24px;
+        height: 24px;
+    }
+    .dialog-list .dialog-list-item .msg-num {
+        width: 12px;
+        height: 12px;
+        background: #ec2626;
+        font-size: 8px;
+        font-family: PingFangSC, PingFangSC-Regular;
+        text-align: center;
+        line-height: 12px;
+        font-weight: 600;
+        color: #ffffff;
+        display: none;
+        border-radius: 50%;
+        position: absolute;
+        right: -4px;
+        top: 0;
+    }
+    .dialog-list .dialog-list-item .nickname {
+        vertical-align: middle;
+        margin-left: 11px;
+        font-size: 14px;
+        font-family: PingFangSC, PingFangSC-Regular;
+        font-weight: 400;
+        color: #333333;
+        letter-spacing: 1px;
+    }
+    .dialog-list .dialog-select .checked {
+        background-color: #F5F6FA;
     }
 </style>
