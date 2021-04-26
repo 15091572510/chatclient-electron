@@ -67,15 +67,59 @@
         data: function () {
             return {
                 dialogListHeight: '',
-                myDialogNum: 0,
-                accessDialogNum: 0,
-                leaveDialogNum: 0,
-                myDialogIsOpen: true,
+                // myDialogNum: 0, // 我的会话列表
+                // accessDialogNum: 0,
+                // leaveDialogNum: 0,
+                myDialogIsOpen: true,   // 我的对话是否打开
                 accessDialogIsOpen: false,
                 leaveDialogIsOpen: false
             }
         },
-        // props: ['myDialogList', 'accessDialogList' , 'leaveDialogList'],
+        computed: {
+            myDialogNum: {
+                get: function() {
+                    if (this.myDialogIsOpen) {
+                        return this.$store.state.dialogArr.length
+                    }
+                    return 0
+                },
+                set: function (newValue) {
+                    return newValue
+                }
+            },
+            accessDialogNum: {
+                get: function () {
+                    let num = 0
+                    if (this.accessDialogIsOpen) {
+                        for (let i in this.$store.state.dialogArr) {
+                            if (this.$store.state.dialogArr[i].isOnline) {
+                                num ++
+                            }
+                        }
+                    }
+                    return num
+                },
+                set: function (newValue) {
+                    return newValue
+                }
+            },
+            leaveDialogNum: {
+                get: function () {
+                    let num = 0
+                    if (this.leaveDialogIsOpen) {
+                        for (let i in this.$store.state.dialogArr) {
+                            if (!this.$store.state.dialogArr[i].isOnline) {
+                                num ++
+                            }
+                        }
+                    }
+                    return num
+                },
+                set: function (newValue) {
+                    return newValue
+                }
+            }
+        },
         methods: {
             setDialogListSize: function (height) {
                 this.dialogListHeight = height
@@ -91,10 +135,10 @@
                     this.leaveDialogNum = 0
                     if (this.myDialogIsOpen) {
                         this.myDialogIsOpen = false
-                        this.myDialogNum = 0
+                        // this.myDialogNum = 0
                     } else {
                         this.myDialogIsOpen = true
-                        this.myDialogNum = this.$store.state.dialogArr.length
+                        // this.myDialogNum = this.$store.state.dialogArr.length
                     }
                 } else if (kind === 'access') {
                     this.myDialogIsOpen = false
@@ -106,9 +150,9 @@
                         this.accessDialogIsOpen = false
                     } else {
                         this.accessDialogIsOpen = true
-                        accessNum = this.checkKindDialogNum('access')
+                        // accessNum = this.checkKindDialogNum('access')
                     }
-                    this.accessDialogNum = accessNum
+                    // this.accessDialogNum = accessNum
                 } else if (kind === 'leave') {
                     this.myDialogIsOpen = false
                     this.accessDialogIsOpen =false
@@ -119,9 +163,9 @@
                         this.leaveDialogIsOpen = false
                     } else {
                         this.leaveDialogIsOpen = true
-                        leaveNum = this.checkKindDialogNum('leave')
+                        // leaveNum = this.checkKindDialogNum('leave')
                     }
-                    this.leaveDialogNum = leaveNum
+                    // this.leaveDialogNum = leaveNum
                 }
             },
             checkedDialog: function (room) {

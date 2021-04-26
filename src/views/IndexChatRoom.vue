@@ -97,7 +97,7 @@
              */
             createGroupChatRoom: function(data) {
                 try {
-                    data.fromUserId = data.fromUserId.split("_")[0];    // 客户id
+                    data.fromUserId = data.fromUserId.split("_")[0]    // 客户id
                     // 客户离开后再加入
                     // var chatRoomDom = document.querySelector(".chat-room-item[data-fromuserid='"+data.fromUserId+"']");
                     // if (chatRoomDom) {
@@ -116,7 +116,7 @@
                     // 处理是否当天第一次收到消费者消息
                     // todayFirstReceiveMsg(data);
                 } catch (e) {
-                    alert("createGroupChatRoom: " + e);
+                    alert("createGroupChatRoom: " + e)
                 }
             },
             addDialogKind: function(data) {
