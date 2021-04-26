@@ -23,7 +23,7 @@
                 <img title="聊天记录" onclick="historyRecord.showHistory()" src="//static.youjiagou.com/musi/resources/images/serviceSystem/new/history_record@2x.png" />
                 <img title="全局搜索" onclick="openGlobalPop()" src="//static.youjiagou.com/musi/resources/images/serviceSystem/new/search.png" />
             </div>
-            <div class="edit-container" contenteditable="true" onkeydown="editKeydown()"></div>
+            <div class="edit-container" contenteditable="true" spellcheck="false" onkeydown="editKeydown()"></div>
             <div class="msg-send-container">
                 <button title="按Enter键发送，按Shift+Enter键换行" class="msg-send" onclick="sendMessage()">发送</button>
             </div>

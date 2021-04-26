@@ -1,12 +1,12 @@
 <template>
     <div class="dialog-list" id="menuExtra" v-bind:style="{height: dialogListHeight + 'px'}">
         <p>会话列表</p>
-        <div id="myDialog" class="dialog-kind is-open" v-on:click="openOrHideDialogList()">
+        <div id="myDialog" class="dialog-kind" v-bind:class="{'is-open': myDialogIsOpen}" v-on:click="openOrHideDialogList('my')">
             <img class="dialog-kind-icon" src="//static.youjiagou.com/musi/resources/images/serviceSystem/new/createdown_up@2x.png" />
             <span>我的会话</span>
         </div>
-        <ul class="dialog-select">
-            <li v-for="item in this.$store.state.dialogArr" class="dialog-list-item" v-on:click="checkedDialog(item.room)">
+        <ul class="dialog-select" v-bind:style="{height: myDialogNum * 76 + 'px'}">
+            <li v-for="item in this.$store.state.dialogArr" class="dialog-list-item" v-bind:class="{checked: item.isChecked}" v-on:click="checkedDialog(item.room)">
                 <img class="customer-avatar" v-bind:src="item.avatar" />
                 <div class="customer-msg-preview">
                     <p>
@@ -20,12 +20,12 @@
                 </div>
             </li>
         </ul>
-        <div id="inTheAccess" class="dialog-kind" v-on:click="openOrHideDialogList()">
+        <div id="inTheAccess" class="dialog-kind" v-bind:class="{'is-open': accessDialogIsOpen}" v-on:click="openOrHideDialogList('access')">
             <img class="dialog-kind-icon" src="//static.youjiagou.com/musi/resources/images/serviceSystem/new/createdown_up@2x.png" />
             <span>访问中</span>
         </div>
-        <ul class="dialog-select">
-            <li v-for="item in this.$store.state.dialogArr" v-if="item.isOnline" class="dialog-list-item" v-on:click="checkedDialog(item.room)">
+        <ul class="dialog-select" v-bind:style="{height: accessDialogNum * 76 + 'px'}">
+            <li v-for="item in this.$store.state.dialogArr" v-if="item.isOnline" class="dialog-list-item" v-bind:class="{checked: item.isChecked}" v-on:click="checkedDialog(item.room)">
                 <img class="customer-avatar" v-bind:src="item.avatar" />
                 <div class="customer-msg-preview">
                     <p>
@@ -39,12 +39,12 @@
                 </div>
             </li>
         </ul>
-        <div id="haveToLeave" class="dialog-kind" v-on:click="openOrHideDialogList()">
+        <div id="haveToLeave" class="dialog-kind" v-bind:class="{'is-open': leaveDialogIsOpen}" v-on:click="openOrHideDialogList('leave')">
             <img class="dialog-kind-icon" src="//static.youjiagou.com/musi/resources/images/serviceSystem/new/createdown_up@2x.png" />
             <span>离开</span>
         </div>
-        <ul class="dialog-select">
-            <li v-for="item in this.$store.state.dialogArr" v-if="!item.isOnline" class="dialog-list-item" v-on:click="checkedDialog(item.room)">
+        <ul class="dialog-select" v-bind:style="{height: leaveDialogNum * 76 + 'px'}">
+            <li v-for="item in this.$store.state.dialogArr" v-if="!item.isOnline" class="dialog-list-item" v-bind:class="{checked: item.isChecked}" v-on:click="checkedDialog(item.room)">
                 <img class="customer-avatar" v-bind:src="item.avatar" />
                 <div class="customer-msg-preview">
                     <p>
@@ -67,48 +67,77 @@
         data: function () {
             return {
                 dialogListHeight: '',
-                // dialogList: []
+                myDialogNum: 0,
+                accessDialogNum: 0,
+                leaveDialogNum: 0,
+                myDialogIsOpen: true,
+                accessDialogIsOpen: false,
+                leaveDialogIsOpen: false
             }
         },
         // props: ['myDialogList', 'accessDialogList' , 'leaveDialogList'],
         methods: {
             setDialogListSize: function (height) {
-                this.dialogListHeight = height;
+                this.dialogListHeight = height
             },
             /**
              * 打开/关闭对话分类
              */
-            openOrHideDialogList: function () {
-                try {
-                    var target = event.currentTarget;
-                    if (target.className.indexOf("is-open") != -1) {
-                        target.classList.remove("is-open");
-                        target.nextElementSibling.style.height = "1px";
+            openOrHideDialogList: function (kind) {
+                if (kind === 'my') {
+                    this.accessDialogIsOpen = false
+                    this.leaveDialogIsOpen = false
+                    this.accessDialogNum = 0
+                    this.leaveDialogNum = 0
+                    if (this.myDialogIsOpen) {
+                        this.myDialogIsOpen = false
+                        this.myDialogNum = 0
                     } else {
-                        // 关闭所有已打开对话分类
-                        var dialogUls = document.getElementsByClassName("dialog-select");
-                        for (var i=0; i<dialogUls.length; i++) {
-                            dialogUls[i].style.height = "1px";
-                        }
-                        var dialogKinds = document.getElementsByClassName("dialog-kind");
-                        for (var i=0; i<dialogKinds.length; i++) {
-                            dialogKinds[i].classList.remove("is-open");
-                        }
-                        // 打开当前点击的对话分类
-                        target.classList.add("is-open");
-                        var dialogList = target.nextElementSibling;
-                        if (dialogList.firstElementChild) {
-                            var dialogListHeight = dialogList.firstElementChild.offsetHeight * dialogList.children.length;
-                            dialogList.style.height = dialogListHeight + "px";
-                        }
+                        this.myDialogIsOpen = true
+                        this.myDialogNum = this.$store.state.dialogArr.length
                     }
-                } catch (e) {
-                    alert("openOrHideDialogList: " + e);
+                } else if (kind === 'access') {
+                    this.myDialogIsOpen = false
+                    this.leaveDialogIsOpen =false
+                    this.myDialogNum = 0
+                    this.leaveDialogNum = 0
+                    let accessNum = 0
+                    if (this.accessDialogIsOpen) {
+                        this.accessDialogIsOpen = false
+                    } else {
+                        this.accessDialogIsOpen = true
+                        accessNum = this.checkKindDialogNum('access')
+                    }
+                    this.accessDialogNum = accessNum
+                } else if (kind === 'leave') {
+                    this.myDialogIsOpen = false
+                    this.accessDialogIsOpen =false
+                    this.myDialogNum = 0
+                    this.accessDialogNum = 0
+                    let leaveNum = 0
+                    if (this.leaveDialogIsOpen) {
+                        this.leaveDialogIsOpen = false
+                    } else {
+                        this.leaveDialogIsOpen = true
+                        leaveNum = this.checkKindDialogNum('leave')
+                    }
+                    this.leaveDialogNum = leaveNum
                 }
             },
             checkedDialog: function (room) {
                 this.$store.commit('cancelChecked')
                 this.$store.commit('selectChecked', room)
+            },
+            checkKindDialogNum: function (kind) {
+                let accessNum = 0, leaveNum = 0
+                for (let i in this.$store.state.dialogArr) {
+                    if (this.$store.state.dialogArr[i].isOnline) {
+                        accessNum ++
+                    } else {
+                        leaveNum ++
+                    }
+                }
+                return kind === 'access' ? accessNum : leaveNum
             }
         }
     }
@@ -144,6 +173,7 @@
         line-height: 40px;
         cursor: pointer;
         letter-spacing: 1px;
+        margin-top: 1px;
     }
     .dialog-list .dialog-kind.is-open .dialog-kind-icon {
         transform: none;
