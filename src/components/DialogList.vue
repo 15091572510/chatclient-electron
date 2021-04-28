@@ -76,6 +76,7 @@
             }
         },
         computed: {
+            // 我的会话数
             myDialogNum: {
                 get: function() {
                     if (this.myDialogIsOpen) {
@@ -87,6 +88,7 @@
                     return newValue
                 }
             },
+            // 访问中的会话
             accessDialogNum: {
                 get: function () {
                     let num = 0
@@ -103,6 +105,7 @@
                     return newValue
                 }
             },
+            // 已离开的会话数
             leaveDialogNum: {
                 get: function () {
                     let num = 0
@@ -142,7 +145,7 @@
                     }
                 } else if (kind === 'access') {
                     this.myDialogIsOpen = false
-                    this.leaveDialogIsOpen =false
+                    this.leaveDialogIsOpen = false
                     this.myDialogNum = 0
                     this.leaveDialogNum = 0
                     let accessNum = 0
@@ -155,7 +158,7 @@
                     // this.accessDialogNum = accessNum
                 } else if (kind === 'leave') {
                     this.myDialogIsOpen = false
-                    this.accessDialogIsOpen =false
+                    this.accessDialogIsOpen = false
                     this.myDialogNum = 0
                     this.accessDialogNum = 0
                     let leaveNum = 0
