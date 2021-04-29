@@ -80,12 +80,11 @@
             myDialogNum: {
                 get: function() {
                     if (this.myDialogIsOpen) {
+                        this.accessDialogIsOpen = false
+                        this.leaveDialogIsOpen = false
                         return this.$store.state.dialogArr.length
                     }
                     return 0
-                },
-                set: function (newValue) {
-                    return newValue
                 }
             },
             // 访问中的会话
@@ -93,6 +92,8 @@
                 get: function () {
                     let num = 0
                     if (this.accessDialogIsOpen) {
+                        this.myDialogIsOpen = false
+                        this.leaveDialogIsOpen = false
                         for (let i in this.$store.state.dialogArr) {
                             if (this.$store.state.dialogArr[i].isOnline) {
                                 num ++
@@ -100,9 +101,6 @@
                         }
                     }
                     return num
-                },
-                set: function (newValue) {
-                    return newValue
                 }
             },
             // 已离开的会话数
@@ -110,6 +108,8 @@
                 get: function () {
                     let num = 0
                     if (this.leaveDialogIsOpen) {
+                        this.myDialogIsOpen = false
+                        this.accessDialogIsOpen = false
                         for (let i in this.$store.state.dialogArr) {
                             if (!this.$store.state.dialogArr[i].isOnline) {
                                 num ++
@@ -117,9 +117,6 @@
                         }
                     }
                     return num
-                },
-                set: function (newValue) {
-                    return newValue
                 }
             }
         },
@@ -132,59 +129,28 @@
              */
             openOrHideDialogList: function (kind) {
                 if (kind === 'my') {
-                    this.accessDialogIsOpen = false
-                    this.leaveDialogIsOpen = false
-                    this.accessDialogNum = 0
-                    this.leaveDialogNum = 0
                     if (this.myDialogIsOpen) {
                         this.myDialogIsOpen = false
-                        // this.myDialogNum = 0
                     } else {
                         this.myDialogIsOpen = true
-                        // this.myDialogNum = this.$store.state.dialogArr.length
                     }
                 } else if (kind === 'access') {
-                    this.myDialogIsOpen = false
-                    this.leaveDialogIsOpen = false
-                    this.myDialogNum = 0
-                    this.leaveDialogNum = 0
-                    let accessNum = 0
                     if (this.accessDialogIsOpen) {
                         this.accessDialogIsOpen = false
                     } else {
                         this.accessDialogIsOpen = true
-                        // accessNum = this.checkKindDialogNum('access')
                     }
-                    // this.accessDialogNum = accessNum
                 } else if (kind === 'leave') {
-                    this.myDialogIsOpen = false
-                    this.accessDialogIsOpen = false
-                    this.myDialogNum = 0
-                    this.accessDialogNum = 0
-                    let leaveNum = 0
                     if (this.leaveDialogIsOpen) {
                         this.leaveDialogIsOpen = false
                     } else {
                         this.leaveDialogIsOpen = true
-                        // leaveNum = this.checkKindDialogNum('leave')
                     }
-                    // this.leaveDialogNum = leaveNum
                 }
             },
             checkedDialog: function (room) {
                 this.$store.commit('cancelChecked')
                 this.$store.commit('selectChecked', room)
-            },
-            checkKindDialogNum: function (kind) {
-                let accessNum = 0, leaveNum = 0
-                for (let i in this.$store.state.dialogArr) {
-                    if (this.$store.state.dialogArr[i].isOnline) {
-                        accessNum ++
-                    } else {
-                        leaveNum ++
-                    }
-                }
-                return kind === 'access' ? accessNum : leaveNum
             }
         }
     }

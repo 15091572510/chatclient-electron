@@ -7,7 +7,15 @@
                 <span class="user-source" data-id="0">{{userSource}}</span>
             </div>
             <div id="chatRoomContainer" class="chat-room-container" v-bind:style="{width: chatRoomWidth + 'px', height: chatRoomHeight + 'px'}">
-                <ChatRoomItem ref="chatRoomItem" v-for="item in this.$store.state.dialogArr" v-bind:room="item.room" v-bind:fromUserId="item.fromUserId" v-show="item.isChecked"></ChatRoomItem>
+                <ChatRoomItem
+                        ref="chatRoomItem"
+                        v-for="item in this.$store.state.dialogArr"
+                        v-bind:room="item.room"
+                        v-bind:fromUserId="item.fromUserId"
+                        v-show="item.isChecked"
+                        v-bind:key="item.room"
+                >
+                </ChatRoomItem>
             </div>
         </div>
     </div>
